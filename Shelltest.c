@@ -4,6 +4,9 @@
 #include<stdio.h>
 #include<sys/wait.h>
 #include<sys/types.h>
+#include<dirent.h>
+
+void leadfile();
 
 #define chop(str) str[strlen(str)-1]=0x00;
 
@@ -27,7 +30,12 @@ int main(int argc, char **argv)
     {
        printf("jinjinjin\n");
     }
-    if(access(buf, X_OK)==0) // access(pathname, mode)
+
+    if(strncmp(buf, "ls", 2) == 0)
+    {
+       leadfile();
+    }
+   /* if(access(buf, X_OK)==0) // access(pathname, mode)
     {
       pid = fork();
       if(pid < 0)
@@ -49,7 +57,28 @@ int main(int argc, char **argv)
     else
     {
        fprintf(stderr,"Command Not Found!\n\n");
-    }
+    }*/
   }
 }
 
+void leadfile(){
+   DIR *pdir;
+   struct dirent *pde;
+   int i = 0;
+
+   if((pdir = opendir("./")) < 0) {
+      perror("opendir");
+      exit(1);
+   }
+
+   while((pde = readdir(pdir)) != NULL){
+      printf("%20s", pde->d_name);
+      if(++i%4 == 0){
+        printf("\n");
+      }
+    }
+
+    printf("\n");
+
+    closedir(pdir);
+}
